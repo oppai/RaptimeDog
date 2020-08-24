@@ -51,13 +51,63 @@ defmodule RaptimeDog.Scraper do
     end
 
     defp parse_horse_detail(horse_html) do
+      :timer.sleep(100)
       %{
         pos: horse_html |> Meeseeks.one(css(".Waku")) |> Meeseeks.text(),
         num: horse_html |> Meeseeks.one(css(".Umaban")) |> Meeseeks.text(),
         name: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.text(),
         odds: horse_html |> Meeseeks.one(css(".Popular span")) |> Meeseeks.text(),
-        href: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href")
+        data: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href") |> RaptimeDog.Scraper.HorseDetail.get()
       }
+    end
+
+    defp get_basehtml(url) do
+      HTTPoison.get!(url).body
+      |> MbcsRs.decode!("EUC-JP") # NOTE: 詳細画面はなぜかEUCJP
+    end
+  end
+
+  defmodule HorseDetail do
+    import Meeseeks.CSS
+
+    def get(url) do
+      html = get_basehtml(url)
+      table = html |> Meeseeks.one(css("table.db_h_race_results"))
+      records = table |> Meeseeks.all(css("tbody tr")) |> Enum.map(&parse_record/1)
+      %{
+        name: html |> Meeseeks.one(css(".horse_title h1")) |> Meeseeks.text(),
+        info: html |> Meeseeks.one(css(".horse_title p")) |> Meeseeks.text(),
+        records: records
+      }
+    end
+
+    defp parse_record(row) do
+        cols = row |> Meeseeks.all(css("td"))
+        %{
+          date: cols |> Enum.at(0) |> Meeseeks.text(),
+          race_name: cols |> Enum.at(4) |> Meeseeks.text(),
+          race_rank: cols |> Enum.at(11) |> Meeseeks.text(),
+          race_info: cols |> Enum.at(14) |> Meeseeks.text() |> parse_race_info(),
+          time: cols |> Enum.at(17) |> Meeseeks.text() |> parse_race_time(),
+        }
+    end
+
+    defp parse_race_info(text) do
+      case text do
+        "芝" <> length -> %{type: "芝", length: length |> String.to_integer()}
+        "ダ" <> length -> %{type: "ダ", length: length |> String.to_integer()}
+        length -> %{type: "-", length: length}
+      end
+    end
+
+    defp parse_race_time(nil), do: 0
+    defp parse_race_time(""), do: 0
+    defp parse_race_time(text) do
+      times = Regex.run(~r/(\d+):(\d+)\.(\d+)/, text)
+      m = times |> Enum.at(1) |> String.to_integer()
+      s = times |> Enum.at(2) |> String.to_integer()
+      ms = times |> Enum.at(3) |> String.to_integer()
+      m * 60 + s + ms * 0.1
     end
 
     defp get_basehtml(url) do
