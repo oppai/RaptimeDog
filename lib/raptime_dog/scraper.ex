@@ -41,4 +41,28 @@ defmodule RaptimeDog.Scraper do
       "https://race.netkeiba.com/top/#{href}"
     end
   end
+
+  defmodule RaceDetail do
+    import Meeseeks.CSS
+
+    def get(url) do
+      table = get_basehtml(url) |> Meeseeks.one(css(".ShutubaTable"))
+      table |> Meeseeks.all(css(".HorseList")) |> Enum.map(&parse_horse_detail/1)
+    end
+
+    defp parse_horse_detail(horse_html) do
+      %{
+        pos: horse_html |> Meeseeks.one(css(".Waku")) |> Meeseeks.text(),
+        num: horse_html |> Meeseeks.one(css(".Umaban")) |> Meeseeks.text(),
+        name: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.text(),
+        odds: horse_html |> Meeseeks.one(css(".Popular span")) |> Meeseeks.text(),
+        href: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href")
+      }
+    end
+
+    defp get_basehtml(url) do
+      HTTPoison.get!(url).body
+      |> MbcsRs.decode!("EUC-JP") # NOTE: 詳細画面はなぜかEUCJP
+    end
+  end
 end

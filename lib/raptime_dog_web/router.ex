@@ -7,9 +7,10 @@ defmodule RaptimeDogWeb.Router do
     plug :fetch_flash
   end
 
-  scope "/", RaptimeDogWeb do
+  scope "/api", RaptimeDogWeb do
     pipe_through :api
 
-    get "/recently", RaptimeController, :index
+    get "/list", RaptimeController, :list
+    get "/detail", RaptimeController, :detail
   end
 end

@@ -39,7 +39,9 @@ defmodule RaptimeDog.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:meeseeks, "~> 0.15.1"},
-      {:httpoison, "~> 1.6"}
+      {:httpoison, "~> 1.6"},
+      {:codepagex, "~> 0.1.4"},
+      {:mbcs_rs, "~> 0.1"}
     ]
   end
 
