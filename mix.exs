@@ -38,9 +38,10 @@ defmodule RaptimeDog.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      #{:meeseeks, "~> 0.15.1"},
+      {:meeseeks, "~> 0.15.1"},
       {:httpoison, "~> 1.6"},
-      #{:mbcs_rs, "~> 0.1"}
+      {:codepagex, "~> 0.1.4"},
+      {:mbcs_rs, "~> 0.1"}
     ]
   end
 
