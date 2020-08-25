@@ -27,7 +27,7 @@ defmodule RaptimeDogWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :raptime_dog,
-    gzip: false
+    gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt index.html)
 
   # Code reloading can be explicitly enabled under the
