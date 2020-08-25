@@ -28,7 +28,7 @@ defmodule RaptimeDogWeb.Endpoint do
     at: "/",
     from: :raptime_dog,
     gzip: false,
-    only: ~w(css img js favicon.ico robots.txt index.html)
+    only: ~w(css img js favicon.ico robots.txt index.html race.json)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
