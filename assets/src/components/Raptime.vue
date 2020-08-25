@@ -37,7 +37,7 @@ export default {
   },
   mounted() {
     this.axios
-      .get('http://localhost:8080/race.json')
+      .get('/race.json')
       .then(res => {
         this.horse_list = res.data.data
       })
