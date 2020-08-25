@@ -10,9 +10,15 @@ defmodule RaptimeDogWeb.Endpoint do
     signing_salt: "OBN2Cb9F"
   ]
 
-  socket "/socket", RaptimeDogWeb.UserSocket,
-    websocket: true,
-    longpoll: false
+  # socket "/socket", RaptimeDogWeb.UserSocket,
+  #   websocket: true,
+  #   longpoll: false
+
+  def redirect_index(conn = %Plug.Conn{path_info: []}, _opts) do
+    %Plug.Conn{conn | path_info: ["index.html"]}
+  end
+  def redirect_index(conn, _opts), do: conn
+  plug :redirect_index
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -21,8 +27,8 @@ defmodule RaptimeDogWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :raptime_dog,
-    gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    gzip: false
+    only: ~w(css fonts images js favicon.ico robots.txt index.html)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
