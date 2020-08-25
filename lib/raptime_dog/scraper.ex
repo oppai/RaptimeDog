@@ -76,7 +76,7 @@ defmodule RaptimeDog.Scraper do
       records = table |> Meeseeks.all(css("tbody tr")) |> Enum.map(&parse_record/1)
       %{
         name: html |> Meeseeks.one(css(".horse_title h1")) |> Meeseeks.text(),
-        info: html |> Meeseeks.one(css(".horse_title p")) |> Meeseeks.text(),
+        info: html |> Meeseeks.all(css(".horse_title p")) |> List.last() |> Meeseeks.text(),
         records: records
       }
     end
