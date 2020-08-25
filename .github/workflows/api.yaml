@@ -9,6 +9,10 @@ jobs:
       image: elixir:1.10.2-alpine
     steps:
     - uses: actions/checkout@v1
+    - neme: Setup Rust
+      run: |
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+      source $HOME/.cargo/env
     - name: Setup Elixir
       run: |
         mix local.hex --force
