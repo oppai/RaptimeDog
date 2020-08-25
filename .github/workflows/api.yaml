@@ -13,12 +13,13 @@ jobs:
       run: |
         apk add curl
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-        source $HOME/.cargo/env
     - name: Setup Elixir
       run: |
         mix local.hex --force
         mix local.rebar --force
     - name: Build and setup
-      run: MIX_ENV=test mix do deps.get, compile --warnings-as-errors
+      run: |
+        source $HOME/.cargo/env
+        MIX_ENV=test mix do deps.get, compile --warnings-as-errors
     - name: Exec tests
       run: MIX_ENV=test mix test
