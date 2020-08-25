@@ -1,4 +1,4 @@
-# RaptimeDog
+# RaptimeDog ![](https://github.com/oppai/RaptimeDog/workflows/api/badge.svg)
 
 To start your Phoenix server:
 
