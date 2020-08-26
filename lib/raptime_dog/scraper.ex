@@ -52,7 +52,8 @@ defmodule RaptimeDog.Scraper do
       %{
         race_num: html |> Meeseeks.one(css(".RaceList_NameBox .RaceNum")) |> Meeseeks.text(),
         race_name: html |> Meeseeks.one(css(".RaceList_NameBox .RaceName")) |> Meeseeks.text() |> String.trim(),
-        race_data: html |> Meeseeks.one(css(".RaceList_NameBox .RaceData01")) |> Meeseeks.text() |> String.trim(),
+        race_field: html |> Meeseeks.one(css(".RaceList_NameBox .RaceData01")) |> Meeseeks.text() |> String.trim(),
+        race_detail: html |> Meeseeks.all(css(".RaceList_NameBox .RaceData02 span")) |> Enum.map(&Meeseeks.text/1),
         horses: horses
       }
     end
