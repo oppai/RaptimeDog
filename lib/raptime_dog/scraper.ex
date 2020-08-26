@@ -46,8 +46,15 @@ defmodule RaptimeDog.Scraper do
     import Meeseeks.CSS
 
     def get(url) do
-      table = get_basehtml(url) |> Meeseeks.one(css(".ShutubaTable"))
-      table |> Meeseeks.all(css(".HorseList")) |> Enum.map(&parse_horse_detail/1)
+      html = get_basehtml(url)
+      table = html |> Meeseeks.one(css(".ShutubaTable"))
+      horses = table |> Meeseeks.all(css(".HorseList")) |> Enum.map(&parse_horse_detail/1)
+      %{
+        race_num: html |> Meeseeks.one(css(".RaceList_NameBox .RaceNum")) |> Meeseeks.text(),
+        race_name: html |> Meeseeks.one(css(".RaceList_NameBox .RaceName")) |> Meeseeks.text() |> String.trim(),
+        race_data: html |> Meeseeks.one(css(".RaceList_NameBox .RaceData01")) |> Meeseeks.text() |> String.trim(),
+        horses: horses
+      }
     end
 
     defp parse_horse_detail(horse_html) do
