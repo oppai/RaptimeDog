@@ -46,18 +46,28 @@ defmodule RaptimeDog.Scraper do
     import Meeseeks.CSS
 
     def get(url) do
-      table = get_basehtml(url) |> Meeseeks.one(css(".ShutubaTable"))
-      table |> Meeseeks.all(css(".HorseList")) |> Enum.map(&parse_horse_detail/1)
+      html = get_basehtml(url)
+      table = html |> Meeseeks.one(css(".ShutubaTable"))
+      horses = table |> Meeseeks.all(css(".HorseList")) |> Enum.map(&parse_horse_detail/1)
+      %{
+        race_num: html |> Meeseeks.one(css(".RaceList_NameBox .RaceNum")) |> Meeseeks.text(),
+        race_name: html |> Meeseeks.one(css(".RaceList_NameBox .RaceName")) |> Meeseeks.text() |> String.trim(),
+        race_field: html |> Meeseeks.one(css(".RaceList_NameBox .RaceData01")) |> Meeseeks.text() |> String.trim(),
+        race_detail: html |> Meeseeks.all(css(".RaceList_NameBox .RaceData02 span")) |> Enum.map(&Meeseeks.text/1),
+        horses: horses
+      }
     end
 
     defp parse_horse_detail(horse_html) do
       :timer.sleep(100)
+      url = horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href")
       %{
         pos: horse_html |> Meeseeks.one(css(".Waku")) |> Meeseeks.text(),
         num: horse_html |> Meeseeks.one(css(".Umaban")) |> Meeseeks.text(),
         name: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.text(),
         odds: horse_html |> Meeseeks.one(css(".Popular span")) |> Meeseeks.text(),
-        data: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href") |> RaptimeDog.Scraper.HorseDetail.get()
+        data: url |> RaptimeDog.Scraper.HorseDetail.get(),
+        url: url
       }
     end
 
@@ -85,6 +95,7 @@ defmodule RaptimeDog.Scraper do
         cols = row |> Meeseeks.all(css("td"))
         %{
           date: cols |> Enum.at(0) |> Meeseeks.text(),
+          place: cols |> Enum.at(1) |> Meeseeks.text(),
           race_name: cols |> Enum.at(4) |> Meeseeks.text(),
           race_rank: cols |> Enum.at(11) |> Meeseeks.text(),
           race_info: cols |> Enum.at(14) |> Meeseeks.text() |> parse_race_info(),
