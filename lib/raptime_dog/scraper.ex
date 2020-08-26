@@ -93,6 +93,7 @@ defmodule RaptimeDog.Scraper do
         cols = row |> Meeseeks.all(css("td"))
         %{
           date: cols |> Enum.at(0) |> Meeseeks.text(),
+          place: cols |> Enum.at(1) |> Meeseeks.text(),
           race_name: cols |> Enum.at(4) |> Meeseeks.text(),
           race_rank: cols |> Enum.at(11) |> Meeseeks.text(),
           race_info: cols |> Enum.at(14) |> Meeseeks.text() |> parse_race_info(),
