@@ -60,12 +60,14 @@ defmodule RaptimeDog.Scraper do
 
     defp parse_horse_detail(horse_html) do
       :timer.sleep(100)
+      url = horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href")
       %{
         pos: horse_html |> Meeseeks.one(css(".Waku")) |> Meeseeks.text(),
         num: horse_html |> Meeseeks.one(css(".Umaban")) |> Meeseeks.text(),
         name: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.text(),
         odds: horse_html |> Meeseeks.one(css(".Popular span")) |> Meeseeks.text(),
-        data: horse_html |> Meeseeks.one(css(".HorseName a")) |> Meeseeks.attr("href") |> RaptimeDog.Scraper.HorseDetail.get()
+        data: url |> RaptimeDog.Scraper.HorseDetail.get(),
+        url: url
       }
     end
 
