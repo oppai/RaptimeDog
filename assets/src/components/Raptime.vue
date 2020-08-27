@@ -80,7 +80,6 @@ export default {
   methods: {
     getRaceData() {
       if (this.url == "") return;
-      console.log(this.url);
       this.loading = true
       this.axios
       .get(`/api/detail?url=${this.url}`)
