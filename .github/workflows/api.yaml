@@ -20,6 +20,6 @@ jobs:
     - name: Build and setup
       run: |
         source $HOME/.cargo/env
-        MIX_ENV=test mix do deps.get, compile --warnings-as-errors
+        RUSTFLAGS="-C target-feature=-crt-static" MIX_ENV=test mix do deps.get, compile --warnings-as-errors
     - name: Exec tests
       run: MIX_ENV=test mix test
