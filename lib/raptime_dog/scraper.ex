@@ -107,6 +107,7 @@ defmodule RaptimeDog.Scraper do
       case text do
         "芝" <> length -> %{type: "芝", length: length |> String.to_integer()}
         "ダ" <> length -> %{type: "ダ", length: length |> String.to_integer()}
+        "障" <> length -> %{type: "障", length: length |> String.to_integer()}
         length -> %{type: "-", length: length}
       end
     end
