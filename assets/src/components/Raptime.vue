@@ -21,18 +21,16 @@
             <tr>
               <th>番号</th>
               <th>名前</th>
-              <th>直5レース1F</th>
-              <th>直10レース1F</th>
-              <th>ダ含み直10レース1F</th>
+              <th>芝 直近3レース1F</th>
+              <th>ダ 直近3レース1F</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(horse, idx1) in race.horses" :key="idx1">
               <td> {{ horse.num || '-' }} </td>
               <td> <a target="_blank" v-bind:href="horse.url">{{ horse.name }}</a> </td>
-              <td> {{ avgFurlong(horse.data.records, 5) }}s </td>
-              <td> {{ avgFurlong(horse.data.records, 10) }}s </td>
-              <td> {{ avgFurlong(horse.data.records, 10, false) }}s </td>
+              <td> {{ avgFurlong(horse.data.records, 3, fieldType.Turf) }}s </td>
+              <td> {{ avgFurlong(horse.data.records, 3, fieldType.Dart) }}s </td>
             </tr>
           </tbody>
         </table>
@@ -71,7 +69,12 @@ export default {
     return {
       url: "",
       race: null,
-      loading: false
+      loading: false,
+      fieldType: {
+        Turf: "芝",
+        Dart: "ダ",
+        Show: "障"
+      }
     }
   },
   mounted() {
@@ -91,9 +94,9 @@ export default {
     getRaceTitle(race) {
       return race.race_detail[1] + ' ' + race.race_detail[2] + ' ' + race.race_num + ':' + race.race_name + ' - ' + race.race_field
     },
-    avgFurlong(records, num, turfOnly = true) {
+    avgFurlong(records, num, fieldType = null) {
       const turfs = records.filter(record =>(
-        turfOnly ? record.race_info.type == "芝" : true
+        fieldType ? record.race_info.type == fieldType : true
       )).slice(0, num);
       if (turfs.length <= 0) {
         return 0;

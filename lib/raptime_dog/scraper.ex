@@ -83,7 +83,7 @@ defmodule RaptimeDog.Scraper do
     def get(url) do
       html = get_basehtml(url)
       table = html |> Meeseeks.one(css("table.db_h_race_results"))
-      records = table |> Meeseeks.all(css("tbody tr")) |> Enum.map(&parse_record/1)
+      records = table |> Meeseeks.all(css("tbody tr")) |> Enum.map(&parse_record/1) |> Enum.filter(& &1)
       %{
         name: html |> Meeseeks.one(css(".horse_title h1")) |> Meeseeks.text(),
         info: html |> Meeseeks.all(css(".horse_title p")) |> List.last() |> Meeseeks.text(),
@@ -93,14 +93,17 @@ defmodule RaptimeDog.Scraper do
 
     defp parse_record(row) do
         cols = row |> Meeseeks.all(css("td"))
-        %{
-          date: cols |> Enum.at(0) |> Meeseeks.text(),
-          place: cols |> Enum.at(1) |> Meeseeks.text(),
-          race_name: cols |> Enum.at(4) |> Meeseeks.text(),
-          race_rank: cols |> Enum.at(11) |> Meeseeks.text(),
-          race_info: cols |> Enum.at(14) |> Meeseeks.text() |> parse_race_info(),
-          time: cols |> Enum.at(17) |> Meeseeks.text() |> parse_race_time(),
-        }
+        time = cols |> Enum.at(17) |> Meeseeks.text() |> parse_race_time()
+        if time !== 0 do
+          %{
+            date: cols |> Enum.at(0) |> Meeseeks.text(),
+            place: cols |> Enum.at(1) |> Meeseeks.text(),
+            race_name: cols |> Enum.at(4) |> Meeseeks.text(),
+            race_rank: cols |> Enum.at(11) |> Meeseeks.text(),
+            race_info: cols |> Enum.at(14) |> Meeseeks.text() |> parse_race_info(),
+            time: time
+          }
+        end
     end
 
     defp parse_race_info(text) do
