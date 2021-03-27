@@ -118,7 +118,7 @@ defmodule RaptimeDog.Scraper do
     defp parse_race_time(nil), do: 0
     defp parse_race_time(""), do: 0
     defp parse_race_time(text) do
-      times = Regex.run(~r/(\d+):(\d+)\.(\d+)/, text)
+      times = Regex.run(~r/(\d+):(\d+)[\.:](\d+)/, text)
       m = times |> Enum.at(1) |> String.to_integer()
       s = times |> Enum.at(2) |> String.to_integer()
       ms = times |> Enum.at(3) |> String.to_integer()
